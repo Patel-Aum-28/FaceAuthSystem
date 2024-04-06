@@ -80,6 +80,9 @@ python manage.py runserver
     
     ![Login Success](img/7_login_success.PNG)
 
+> [!NOTE]
+> Default credential of django admin panel is `admin`/`password`.
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
