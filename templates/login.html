@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .main{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        h2 {
+            color: #333;
+        }
+        form {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        input[type="text"], input[type="password"], button {
+            padding: 10px;
+            margin: 5px 0;
+            display: block;
+            width: 300px;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        p {
+            margin-top: 10px;
+        }
+        .video-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #video {
+            display: none;
+        }
+        #captured-image {
+            max-width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main"> 
+    <h2>Login</h2>
+    <div class="video-container">
+        <video id="video" autoplay></video>
+        <img id="captured-image" src="#" alt="Click Captured Image to See Preview!">
+    </div>
+
+    <form id="login-form" method="post">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="hidden" id="image-data" name="image_data" required>
+        <button type="button" id="capture-btn">Capture Image</button>
+        <button type="submit">Login</button>
+    </form>
+</div>
+    <script>
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                var videoElement = document.getElementById('video');
+                videoElement.srcObject = stream;
+                videoElement.play();
+            })
+            .catch(function(error) {
+                console.error('Error accessing webcam:', error);
+            });
+
+        document.getElementById('capture-btn').addEventListener('click', function() {
+            var videoElement = document.getElementById('video');
+            var canvas = document.createElement('canvas');
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            var context = canvas.getContext('2d');
+            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+            var imageData = canvas.toDataURL('image/jpeg');
+            document.getElementById('captured-image').src = imageData;
+            document.getElementById('image-data').value = imageData;
+            alert('Image captured! If you want to change the image, reload the page and take a new photo.');
+        });
+    </script>
+
+    {% if error_message %}
+        <p>{{ error_message }}</p>
+    {% endif %}
+</body>
+</html>
